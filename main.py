@@ -26,14 +26,15 @@ def funkLogin():
     varLoginEncrypted_password = hashlib.sha256(varLoginPassword.encode()).hexdigest() #Krypterer password varibialen med hashlib og kaller det for hashed_password
 
 # Sjekker om brukeren finnes i databasen.
-    cursor.execute('''
-    SELECT * FROM users WHERE username = ? AND password = ?''', (varLoginUsername, varLoginEncrypted_password)) 
 
+    try:
+        cursor.execute('''
+    SELECT * FROM users WHERE username = ? AND password = ?''', (varLoginUsername, varLoginEncrypted_password)) #Henter ut brukernavnet og passordet fra databasen etter det du skriver i feltet.
+        db.commit()
+        messagebox.showinfo("Login", "Login suksessfull!") #Messagebox til å få opp popups
+    except sqlite3.Error: #Bruker squlite error sånn at hvis det ikke går, så gir den en feilmelding som jeg også bruker messagebox til. 
+        messagebox.showerror("Login", "Login feil, krav ikke oppfylt.")
 
-    if cursor.fetchall():
-        messagebox.showinfo("Login", "Login suksessfull") #Dette her lager en popup hvis du har logget inn og skrevet riktig informasjon.
-    else:
-        messagebox.showerror("Login", "Login feil") #Lager en popup hvis du har skrevet feil informasjon.
 
 # Her er funksjonen for å registere en ny bruker.
 def funkNew_user():
@@ -118,4 +119,3 @@ varFjernBruker_button = customtkinter.CTkButton(window, text="Slett bruker", fg_
 varFjernBruker_button.pack(pady=5)
 
 window.mainloop() #Kjører vinduet.
-
